@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.min.js"></script>
+    <style>
+        .wrapper {
+            display: flex;
+            width: 180px;
+            height: 150px;
+            background: yellow;
+            border-radius: 10px;
+        }
+
+        .title {
+            border-bottom: 1px solid red;
+        }
+
+        .body {
+            border-bottom: 1px solid blue;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <input type="checkbox" value="1" v-model="checks">
+    <input type="checkbox" value="2" v-model="checks">
+    <input type="checkbox" value="3" v-model="checks">
+    <input type="checkbox" value="4" v-model="checks">
+    <input type="checkbox" value="5" v-model="checks">
+    <span>checks:{{checks}}</span>
+</div>
+
+<div id="app1">
+    <input type="radio" value="1" v-model="which">
+    <input type="radio" value="2" v-model="which">
+    <span>which:{{which}}</span>
+</div>
+
+
+<div id="app2">
+    <select v-model="which">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+    </select>
+    <span>which:{{which}}</span>
+</div>
+
+<!--全局组件-->
+<div id="app4">
+    <tl></tl>
+</div>
+
+<!--局部组件-->
+<div id="app5">
+    <tag></tag>
+    <tag1></tag1>
+</div>
+
+
+<div id="app6">
+    <cc v-bind:is="current"></cc>
+</div>
+
+<div id="app7">
+    <h>total:{{total}}</h>
+    <count ref="c1"></count>
+    <count ref="c2"></count>
+    <button v-on:click="total_count">total</button>
+</div>
+
+
+<div id="app8">
+    <child msg="zhoubo"></child>
+    <child v-bind:msg="parent_msg + ', i love you'"></child>
+</div>
+
+<div id="app9">
+    <h>total:{{total}}</h>
+    <count ref="c1"></count>
+    <count ref="c2"></count>
+</div>
+
+<div id="app10">
+    <h>total:{{total}}</h>
+    <count v-on:inc="inc"></count>
+    <count v-on:inc="inc"></count>
+</div>
+
+<div id="app11">
+    <foo><p>im in app11</p></foo>
+</div>
+
+<!--父组件中没有内容的时候，就显示 slot 中的内容，有的话就覆盖slot中的内容-->
+<!--<div id="app11">-->
+<!--<foo></foo>-->
+<!--</div>-->
+
+<div id="app12">
+    <app-layout>
+        <h1 slot="header">title</h1>
+        <p>content</p>
+    </app-layout>
+</div>
+
+
+<div id="app13">
+    <sticky>
+        <div slot="title">
+            <h3>Title</h3>
+        </div>
+        <div slot="body">
+            <p>Body foo bar baz ddd</p>
+        </div>
+    </sticky>
+</div>
+
+
+<div id="app14">
+    <com1></com1>
+    <com2></com2>
+</div>
+
+
+<div id="todo-app">
+    <hi>todo app</hi>
+    <new-todo></new-todo>
+    <todo-list></todo-list>
+</div>
+
+
+<script>
+    Vue.component('tl', {
+        template: '<h>Hello world</h>'
+    });
+
+    Vue.component('child', {
+        template: '<div>Hello {{msg}}</div>',
+        props: [
+            'msg'
+        ]
+    });
+
+    Vue.component('count', {
+        template: '<button v-on:click="add">{{count}}</button>',
+        data: function () {
+            return {
+                count: 0
+            }
+        },
+        methods: {
+            add: function () {
+                this.count += 1;
+                this.$emit('inc')
+            }
+        }
+    });
+
+    Vue.component('foo', {
+        template: '<div><slot>备用内容</slot></div>'
+    });
+
+    Vue.component('app-layout', {
+        template: '<div class="container"> \
+            <header>\
+                <slot name="header"></slot>\
+            </header>\
+            <body>\
+                <slot></slot>\
+            </body>\
+        </div>'
+    });
+
+    Vue.component('sticky', {
+        template: '<div> \
+        <div class="wrapper">\
+            <div>\
+                <div class="title">\
+                    <slot name="title"></slot>\
+                </div>\
+                <div class="body">\
+                    <slot name="body"></slot>\
+                </div>\
+            </div>\
+        </div>\
+        </div>'
+    });
+
+    var app = new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                checks: ["1", "2", "3", "4"]
+            }
+        }
+    });
+    var app1 = new Vue({
+        el: "#app1",
+        data: function () {
+            return {
+                which: "2"
+            }
+        }
+    });
+
+    var app2 = new Vue({
+        el: "#app2",
+        data: function () {
+            return {
+                which: "2"
+            }
+        }
+    });
+
+    var app4 = new Vue({
+        el: "#app4"
+    });
+
+    var tag = {
+        template: '<h1>haha my name is tmp</h1>'
+    };
+
+    var tag1 = {
+        template: '<h1>haha my name is tmp2</h1>'
+    };
+
+    var app5 = new Vue({
+        el: "#app5",
+        components: {
+            tag: tag,
+            tag1: tag1
+        }
+    });
+
+    var app6 = new Vue({
+        el: "#app6",
+        data: function () {
+            return {
+                current: 'home',
+                i: 0,
+                all: ['home', 'detail', 'price']
+            }
+        },
+        components: {
+            home: {template: '<h>im home</h>'},
+            detail: {template: '<h>im detail</h>'},
+            price: {template: '<h>im price</h>'}
+        },
+        methods: {
+            a: function () {
+                this.current = this.all[this.i % 3];
+                this.i += 1;
+                setTimeout(this.a, 2000);
+
+            }
+        },
+        mounted: function () {
+            setTimeout(this.a, 2000)
+        }
+    });
+
+    var app7 = new Vue({
+        el: "#app7",
+        data: function () {
+            return {
+                total: 0
+            }
+        },
+        methods: {
+            total_count: function () {
+                this.total = this.$refs.c1.count + this.$refs.c2.count;
+            }
+        }
+    });
+
+
+    new Vue({
+        el: '#app8',
+        data: function () {
+            return {
+                'parent_msg': 'wengliqiong'
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app9',
+        data: function () {
+            return {
+                'total': 0
+            }
+        },
+        mounted: function () {
+            this.$refs.c1.$on('inc', this.inc);
+            this.$refs.c2.$on('inc', this.inc)
+        },
+        methods: {
+            inc: function () {
+                this.total += 1
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app10',
+        data: function () {
+            return {
+                'total': 0
+            }
+        },
+        methods: {
+            inc: function () {
+                this.total += 1
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app11'
+    });
+
+    new Vue({
+        el: '#app12'
+    });
+
+    new Vue({
+        el: '#app13'
+    });
+
+    var bus = new Vue({});
+
+    Vue.component('com1', {
+        template: '<button v-on:click="inc">{{count}}</button>',
+        data: function () {
+            return {
+                count: 0
+            }
+        },
+        mounted: function () {
+            bus.$on('com1-inc', this.doinc)
+        },
+        methods: {
+            inc: function () {
+                bus.$emit('com2-inc')
+            },
+            doinc: function () {
+                this.count += 1
+            }
+        }
+    });
+
+    Vue.component('com2', {
+        template: '<button v-on:click="inc">{{count}}</button>',
+        data: function () {
+            return {
+                count: 0
+            }
+        },
+        mounted: function () {
+            bus.$on('com2-inc', this.doinc)
+        },
+        methods: {
+            inc: function () {
+                bus.$emit('com1-inc')
+            },
+            doinc: function () {
+                this.count += 1
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app14'
+    });
+
+
+    var newTodo = {
+        template: '<div>\
+        <input type="text" autofocus v-mode="newtodo">\
+        <button v-on:click="add">add</button>\
+        </div>',
+        data: function () {
+            return {
+                newtodo: ''
+            }
+        },
+        methods: {
+            add: function () {
+                this.$dispatch('newtodo', this.newtodo);
+                this.newtodo = '';
+            }
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

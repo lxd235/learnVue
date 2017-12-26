@@ -1,0 +1,13 @@
+*.idea
+*.git
+*.wpu
+*.sqlite3
+__pycache__
+.idea
+*.log
+/box_dashboard/box_logic.config
+/dashboard/libs
+/nbd/qemu-kvm
+Thumbs.db
+/xdashboard/templates/test
+/xdashboard/static/download
