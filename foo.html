@@ -127,8 +127,8 @@
 
 <div id="todo-app">
     <hi>todo app</hi>
-    <new-todo></new-todo>
-    <todo-list></todo-list>
+    <new-todo @add="add"></new-todo>
+    <todo-list ref="list"></todo-list>
 </div>
 
 
@@ -379,7 +379,7 @@
 
     var newTodo = {
         template: '<div>\
-        <input type="text" autofocus v-mode="newtodo">\
+        <input type="text" autofocus v-model="newtodo">\
         <button v-on:click="add">add</button>\
         </div>',
         data: function () {
@@ -389,11 +389,45 @@
         },
         methods: {
             add: function () {
-                this.$dispatch('newtodo', this.newtodo);
+                if (!this.newtodo){
+                    return;
+                };
+                this.$emit('add', this.newtodo);
                 this.newtodo = '';
             }
         }
-    }
+    };
+
+    var todoList = {
+        template:'<ul>\
+        <li v-for="(item, index) in items">{{item}}\
+        <button @click="del(index)">X</button>\
+        </li>\
+        </ul>',
+        data:function(){
+            return{
+                items:['Hello', 'world']
+            }
+        },
+        methods:{
+            del:function(index){
+                this.items.splice(index, 1);
+            }
+        }
+    };
+
+    new Vue({
+        el: '#todo-app',
+        components:{
+            "new-todo":newTodo,
+            "todo-list":todoList
+        },
+        methods:{
+            add:function(newtodo){
+                this.$refs.list.items.push(newtodo);
+            }
+        }
+    });
 
 
 </script>
